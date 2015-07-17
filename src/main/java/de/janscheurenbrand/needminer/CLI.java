@@ -1,18 +1,19 @@
 package de.janscheurenbrand.needminer;
 
-import de.janscheurenbrand.needminer.tasks.HashTask;
-import de.janscheurenbrand.needminer.tasks.ImportTweetsTask;
-import de.janscheurenbrand.needminer.tasks.LanguageStatsTask;
-import de.janscheurenbrand.needminer.tasks.LanguageTask;
+import de.janscheurenbrand.needminer.tasks.*;
+import de.janscheurenbrand.needminer.twitter.Tweet;
+import de.janscheurenbrand.needminer.util.ExcelExport;
 import de.janscheurenbrand.needminer.worker.WorkerPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Command line interface for running various tasks
@@ -30,7 +31,10 @@ public class CLI {
         options.add(new Option("import", "Imports Tweets from a MySQL Database", "importTweets"));
         options.add(new Option("language", "Detects the Language of the tweets with several language detection frameworks", "languageDetection"));
         options.add(new Option("languagestats", "Calculates and displays some stats about tweets", "languageStats"));
+        options.add(new Option("accountstats", "Calculates and displays some stats about user accounts", "accountStats"));
         options.add(new Option("hash", "Hashes different parts of the tweet text", "hashing"));
+        options.add(new Option("analyze", "Analyzes content of the tweet", "analyzeContent"));
+        options.add(new Option("sample", "Gets a sample of the tweets in the DB"));
         options.add(new Option("exit", "Stops all tasks and exits the application"));
 
         printHelp();
@@ -77,6 +81,16 @@ public class CLI {
         logger.info(String.format("%s completed in %dms%n", "Language stats calculation", end - start));
     }
 
+    public static void accountStats() throws Exception {
+        logger.info("Starting calculation of language stats");
+        long start = System.currentTimeMillis();
+        workerPool = new WorkerPool(AccountStatsTask.class, 10);
+        workerPool.start();
+        AccountStatsTask.stats();
+        long end = System.currentTimeMillis();
+        logger.info(String.format("%s completed in %dms%n", "Account stats calculation", end - start));
+    }
+
     public static void hashing() throws Exception {
         logger.info("Starting hashing");
         long start = System.currentTimeMillis();
@@ -84,6 +98,30 @@ public class CLI {
         workerPool.start();
         long end = System.currentTimeMillis();
         logger.info(String.format("%s completed in %dms%n", "Hashing", end - start));
+    }
+
+    public static void analyzeContent() throws Exception {
+        logger.info("Starting content analyzer");
+        long start = System.currentTimeMillis();
+        workerPool = new WorkerPool(ContentAnalyzerTask.class, 10);
+        workerPool.start();
+        long end = System.currentTimeMillis();
+        logger.info(String.format("%s completed in %dms%n", "Analyzing Content", end - start));
+    }
+
+    public static void sample() throws Exception {
+        logger.info("Starting sampling");
+        long start = System.currentTimeMillis();
+        SampleTask sampleTask = new SampleTask(100);
+        Collection<Tweet> tweets = sampleTask.call();
+        ExcelExport export = new ExcelExport(
+                new String[]{"Document Group","Document Name", "Tweet"},
+                "tweets-batch-4",
+                tweets.iterator(),
+                new File(System.getProperty("user.home")+"/Desktop/tweets-"+String.valueOf(System.currentTimeMillis())+".xls"));
+        export.export();
+        long end = System.currentTimeMillis();
+        logger.info(String.format("%s completed in %dms%n", "Sampling", end - start));
     }
 
     public static void exit() {

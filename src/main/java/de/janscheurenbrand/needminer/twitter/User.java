@@ -11,8 +11,10 @@ public class User {
     private String language;
     private long followers;
     private long friends;
+    private String type;
 
     public User() {
+        type = "unknown";
     }
 
     public long getId() {
@@ -69,6 +71,14 @@ public class User {
 
     public void setFriends(long friends) {
         this.friends = friends;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override

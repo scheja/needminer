@@ -2,10 +2,10 @@ package de.janscheurenbrand.needminer.twitter;
 
 import com.google.gson.annotations.SerializedName;
 import de.janscheurenbrand.needminer.features.Language;
+import de.janscheurenbrand.needminer.features.Need;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Tweet POJO
@@ -25,7 +25,10 @@ public class Tweet {
     private double longitude;
     private String place;
     private List<Language> detectedLanguages;
+    private List<Language> detectedTweets;
+    private List<Need> needs;
     private HashMap<String,String> hashes;
+    private HashMap<String,Boolean> booleanFeatures;
 
     public Tweet() {}
 
@@ -117,12 +120,36 @@ public class Tweet {
         this.detectedLanguages = detectedLanguages;
     }
 
+    public List<Language> getDetectedTweets() {
+        return detectedTweets;
+    }
+
+    public void setDetectedTweets(List<Language> detectedTweets) {
+        this.detectedTweets = detectedTweets;
+    }
+
     public HashMap<String, String> getHashes() {
         return hashes;
     }
 
     public void setHashes(HashMap<String, String> hashes) {
         this.hashes = hashes;
+    }
+
+    public HashMap<String, Boolean> getBooleanFeatures() {
+        return booleanFeatures;
+    }
+
+    public void setBooleanFeatures(HashMap<String, Boolean> booleanFeatures) {
+        this.booleanFeatures = booleanFeatures;
+    }
+
+    public List<Need> getNeeds() {
+        return needs;
+    }
+
+    public void setNeeds(List<Need> needs) {
+        this.needs = needs;
     }
 
     @Override
@@ -156,10 +183,37 @@ public class Tweet {
         }
     }
 
+    public void addBooleanFeature(String key, boolean value) {
+        if (this.booleanFeatures == null) {
+            this.booleanFeatures = new HashMap<>();
+        }
+        this.booleanFeatures.put(key, value);
+    }
+
+
     public void addHash(String key, String value) {
         if (hashes == null) {
             hashes = new HashMap<>();
         }
         hashes.put(key,value);
+    }
+
+    public void addNeed(Need need) {
+        if (this.needs == null) {
+            this.needs = new ArrayList<>();
+        }
+        this.needs.add(need);
+    }
+
+    public List<String> getNeedTexts() {
+        if (this.needs != null) {
+            return this.needs.stream().map( need -> {
+                return this.getText().substring(need.getStart(),need.getEnd());
+            }).collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+
+
     }
 }
