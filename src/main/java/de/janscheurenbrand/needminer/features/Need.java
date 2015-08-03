@@ -6,12 +6,10 @@ package de.janscheurenbrand.needminer.features;
 public class Need {
     private int start;
     private int end;
-    private String detector;
 
-    public Need(int start, int end, String detector) {
+    public Need(int start, int end) {
         this.start = start;
         this.end = end;
-        this.detector = detector;
     }
 
     public int getStart() {
@@ -28,14 +26,6 @@ public class Need {
 
     public void setEnd(int end) {
         this.end = end;
-    }
-
-    public String getDetector() {
-        return detector;
-    }
-
-    public void setDetector(String detector) {
-        this.detector = detector;
     }
 
     @Override

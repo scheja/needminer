@@ -2,10 +2,12 @@ package de.janscheurenbrand.needminer.twitter;
 
 import com.google.gson.annotations.SerializedName;
 import de.janscheurenbrand.needminer.features.Language;
-import de.janscheurenbrand.needminer.features.Need;
+import de.janscheurenbrand.needminer.features.NeedTagging;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Tweet POJO
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class Tweet {
     @SerializedName("_id")
     private String id;
+    private int rand;
     private String text;
     private User user;
     private Date timestamp;
@@ -26,7 +29,7 @@ public class Tweet {
     private String place;
     private List<Language> detectedLanguages;
     private List<Language> detectedTweets;
-    private List<Need> needs;
+    private List<NeedTagging> needTaggings;
     private HashMap<String,String> hashes;
     private HashMap<String,Boolean> booleanFeatures;
 
@@ -38,6 +41,14 @@ public class Tweet {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getRand() {
+        return rand;
+    }
+
+    public void setRand(int rand) {
+        this.rand = rand;
     }
 
     public String getText() {
@@ -144,12 +155,12 @@ public class Tweet {
         this.booleanFeatures = booleanFeatures;
     }
 
-    public List<Need> getNeeds() {
-        return needs;
+    public List<NeedTagging> getNeedTaggings() {
+        return needTaggings;
     }
 
-    public void setNeeds(List<Need> needs) {
-        this.needs = needs;
+    public void setNeedTaggings(List<NeedTagging> needTaggings) {
+        this.needTaggings = needTaggings;
     }
 
     @Override
@@ -195,25 +206,14 @@ public class Tweet {
         if (hashes == null) {
             hashes = new HashMap<>();
         }
-        hashes.put(key,value);
+        hashes.put(key, value);
     }
 
-    public void addNeed(Need need) {
-        if (this.needs == null) {
-            this.needs = new ArrayList<>();
+    public void addNeedTagging(NeedTagging needTagging) {
+        if (this.needTaggings == null) {
+            this.needTaggings = new ArrayList<>();
         }
-        this.needs.add(need);
+        this.needTaggings.add(needTagging);
     }
 
-    public List<String> getNeedTexts() {
-        if (this.needs != null) {
-            return this.needs.stream().map( need -> {
-                return this.getText().substring(need.getStart(),need.getEnd());
-            }).collect(Collectors.toList());
-        } else {
-            return Collections.emptyList();
-        }
-
-
-    }
 }

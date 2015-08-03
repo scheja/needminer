@@ -6,6 +6,7 @@ import com.mongodb.client.MongoCursor;
 import de.janscheurenbrand.needminer.twitter.Tweet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.conversions.Bson;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,11 @@ public class TweetDAO {
         return collection.find(new BasicDBObject("language","de")).into(new ArrayList<>());
     }
 
+    public Tweet getTweetById(String id) {
+        logger.debug("Getting Tweets");
+        return collection.find(new BasicDBObject("_id",id)).first();
+    }
+
     public ArrayList<Tweet> getGermanTweetsWithoutUserType() {
         logger.debug("Getting German Tweets without user type");
         return collection.find(and(eq("user.type", "unknown"),eq("language", "de"))).into(new ArrayList<>());
@@ -46,6 +52,28 @@ public class TweetDAO {
     public ArrayList<Tweet> getGermanTweetsWithoutURL() {
         logger.debug("Getting German Tweets without url");
         return collection.find(and(eq("booleanFeatures.has_url", false),eq("language", "de"))).into(new ArrayList<>());
+    }
+
+    /*
+     * expects tweets to have originalText hash set
+     */
+    public ArrayList<Tweet> getTweetsForTagging(int n, String tagger, int maxPreviousTaggings, String language, boolean with_url) {
+        logger.debug("Getting German Tweets without url");
+        ArrayList<Bson> filters = new ArrayList<>();
+        // See that we have enough taggings for each tweet
+        // Fill them up from the start
+        filters.add(exists(String.format("needTaggings.%s", maxPreviousTaggings), false));
+        // Never let someone tag a tweet more than once
+        filters.add(nin("needTaggings.tagger", tagger));
+        // Language
+        filters.add(eq("language", language));
+        // URLs
+        filters.add(eq("booleanFeatures.has_url", with_url));
+
+        return collection.find(and(filters))
+                .sort(new BasicDBObject("hashes.originalText", 1))
+                .limit(n)
+                .into(new ArrayList<>());
     }
 
     public ArrayList<Tweet> getTweetsByUsername(String username) {

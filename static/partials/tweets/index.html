@@ -1,0 +1,51 @@
+<h1>Start a new tagging session</h1>
+
+<p class="lead">Before you can start tagging needs in tweets, you should read and understand the following definition of customer needs:</p>
+
+<blockquote>
+    <p>One of the most important concepts of marketing is understanding the customer's requirements and how to satisfy them. Kotler and Armstrong divide customer requirements in three distinct categories: Needs, defined as "states of felt deprivation", which include the most basic human requirements for humans like food and shelter.
+        Wants are people's desires for specific satisfiers of need and are shaped by society and personal preferences. When wants (for a specific product or service) are backed by the ability to buy them, they are called demands.
+        A person might have the need for mobility, wants a car and demands a Volkswagen Golf.
+        Needs are often intangible &ndash; for example the needs for mobility or financial security can be interpreted and satisfied in many ways.
+        Therefore people concretize them implicitly by transforming them into wants and demands.
+        For the purpose of this work &ndash; uncovering hidden opportunities for value creation by extracting customer requirements from micro blog data &ndash; there is little to be gained from differentiating between needs, wants and demands.
+        Therefore we are going to stick with the term customer need.</p>
+</blockquote>
+
+<p class="lead">Before you can start, you need to enter your name and select the language of the tweets you want to tag and one of two possible datasets. If you plan to tag multiple times, please always use the exact same name but select different languages and datasets.</p>
+
+<p class="lead">Thank you very much for your help!</p>
+
+
+<form action="/start" method="post" class="form-horizontal" style="margin-top: 40px;">
+    <div class="form-group">
+        <label for="inputname" class="col-sm-2 col-sm-offset-2 control-label">Name</label>
+        <div class="col-sm-4">
+            <input type="text" name="name" class="form-control" id="inputname" placeholder="Your Name">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="languageselect" class="col-sm-2 col-sm-offset-2 control-label">Language</label>
+        <div class="col-sm-4">
+            <select class="form-control" id="languageselect" name="language">
+                <option value="de">German</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="datasetselect" class="col-sm-2 col-sm-offset-2 control-label">Dataset</label>
+        <div class="col-sm-4">
+            <select class="form-control" id="datasetselect" name="dataset">
+                <option value="dataset1">Dataset 1</option>
+                <option value="dataset2">Dataset 2</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-4 col-sm-10">
+            <button type="submit" class="btn btn-lg btn-success">Start Tagging</button>
+        </div>
+    </div>
+</form>
+

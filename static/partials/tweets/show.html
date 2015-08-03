@@ -1,0 +1,32 @@
+<h1>Tweet $tweetId</h1>
+
+<p>Use your mouse to select needs in the following tweet. Just below the text area, you will see a preview of the selected text. Click <span class="btn btn-success btn-xs">Mark Need</span> to submit the need.</p>
+
+<div id="alerts"></div>
+
+<form action="/save" method="post" style="margin-top: 40px;">
+    <div class="form-group">
+        <textarea name="tweetText" id="tweet-text" class="form-control">$tweetText</textarea>
+    </div>
+    <div class="form-group">
+        <p id="preview">
+        </p>
+    </div>
+    <div class="form-group">
+        <input type="hidden" name="tweetId" id="tweetId" value="$tweetId"/>
+        <input type="hidden" name="needs" id="needs"/>
+        <a href="#" class="btn btn-success" id="mark-need">Mark Need</a>
+        <button type="submit" class="btn btn-success pull-right">Save & Next</button>
+    </div>
+</form>
+
+<style type="text/css">
+    #tweet-text {
+        font-size: 24px;
+        padding-bottom: 100px;
+    }
+
+    #alerts .text {
+        font-weight: bold;
+    }
+</style>
