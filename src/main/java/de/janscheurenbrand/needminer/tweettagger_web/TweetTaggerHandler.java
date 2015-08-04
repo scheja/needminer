@@ -78,9 +78,16 @@ public class TweetTaggerHandler implements HttpHandler {
             handleStart(exchange);
         } else if (exchange.getRelativePath().equals("/save"))  {
             handleSave(exchange);
+        } else if (exchange.getRelativePath().equals("/thankyou"))  {
+            handleThankYou(exchange);
         } else {
             handleShow(exchange);
         }
+    }
+
+    private void handleThankYou(HttpServerExchange exchange) {
+        logger.info("thankyou");
+        exchange.getResponseSender().send(Template.yield("tweets/thankyou", templateData));
     }
 
     private void handleIndex(HttpServerExchange exchange) {
