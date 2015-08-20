@@ -69,6 +69,10 @@ public class TweetDAO {
         filters.add(eq("language", language));
         // URLs
         filters.add(eq("booleanFeatures.has_url", with_url));
+        // URLs
+        filters.add(eq("booleanFeatures.duplicate", false));
+        // If a tweet was tagged exactly twice without needs, it should not get displayed again
+        filters.add(or(ne("needTaggings.0.needCount", 0), ne("needTaggings.1.needCount", 0), exists("needTaggings.2", true)));
 
         return collection.find(and(filters))
                 .sort(new BasicDBObject("hashes.originalText", 1))
@@ -76,9 +80,25 @@ public class TweetDAO {
                 .into(new ArrayList<>());
     }
 
+    public ArrayList<Tweet> getTweetsWithTaggings() {
+        logger.debug("Getting German Tweets without url");
+        ArrayList<Bson> filters = new ArrayList<>();
+        filters.add(exists("needTaggings.0.needCount"));
+
+        return collection.find(and(filters))
+                .sort(new BasicDBObject("hashes.originalText", 1))
+                .into(new ArrayList<>());
+    }
+
+
     public ArrayList<Tweet> getTweetsByUsername(String username) {
         logger.debug(String.format("Getting all Tweets from user %s", username));
         return collection.find(eq("user.screenName", username)).into(new ArrayList<>());
+    }
+
+    public ArrayList<Tweet> getTweetsByTextHash(String hash) {
+        logger.debug(String.format("Getting all Tweets with hash %s", hash));
+        return collection.find(eq("hashes.textHash", hash)).into(new ArrayList<>());
     }
 
     public MongoCursor<Tweet> getTweetsIterator() {
@@ -103,6 +123,7 @@ public class TweetDAO {
 
         return new ArrayList<>(tweets1.subList(0,100));
     }
+
 
     public ArrayList<Tweet> getRandomTweetsFromGermanUsersWithoutURL(int limit) {
         long count = getNumberOfTweets();

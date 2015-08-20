@@ -1,5 +1,7 @@
 package de.janscheurenbrand.needminer;
 
+import de.janscheurenbrand.needminer.database.Database;
+import de.janscheurenbrand.needminer.database.TweetDAO;
 import de.janscheurenbrand.needminer.tasks.*;
 import de.janscheurenbrand.needminer.twitter.Tweet;
 import de.janscheurenbrand.needminer.util.ExcelExport;
@@ -33,9 +35,12 @@ public class CLI {
         options.add(new Option("languagestats", "Calculates and displays some stats about tweets", "languageStats"));
         options.add(new Option("accountstats", "Calculates and displays some stats about user accounts", "accountStats"));
         options.add(new Option("hash", "Hashes different parts of the tweet text", "hashing"));
+        options.add(new Option("markduplicates", "Mark dupicate tweets. Run hash before!", "markDuplicates"));
         options.add(new Option("analyze", "Analyzes content of the tweet", "analyzeContent"));
+        options.add(new Option("tagginginfo", "Show stats about the taggings", "taggingInfo"));
         options.add(new Option("sample", "Gets a sample of the tweets in the DB"));
         options.add(new Option("exit", "Stops all tasks and exits the application"));
+        options.add(new Option("help", "Prints this list", "printHelp"));
 
         printHelp();
 
@@ -60,6 +65,16 @@ public class CLI {
         importTweetsTask.call();
         long end = System.currentTimeMillis();
         logger.info(String.format("%s completed in %dms%n", "Tweet import", end - start));
+    }
+
+    // Run hashing before!
+    public static void markDuplicates() throws Exception {
+        logger.info("Starting marking of duplicates");
+        long start = System.currentTimeMillis();
+        MarkDuplicatesTask markDuplicatesTask = new MarkDuplicatesTask();
+        markDuplicatesTask.call();
+        long end = System.currentTimeMillis();
+        logger.info(String.format("%s completed in %dms%n", "Duplicate marking", end - start));
     }
 
     public static void languageDetection() throws Exception{
@@ -105,6 +120,17 @@ public class CLI {
         long start = System.currentTimeMillis();
         workerPool = new WorkerPool(ContentAnalyzerTask.class, 10);
         workerPool.start();
+        long end = System.currentTimeMillis();
+        logger.info(String.format("%s completed in %dms%n", "Analyzing Content", end - start));
+    }
+
+    public static void taggingInfo() throws Exception {
+        logger.info("Starting content analyzer");
+        long start = System.currentTimeMillis();
+
+        TaggingInfoTask taggingInfoTask = new TaggingInfoTask();
+        taggingInfoTask.call();
+
         long end = System.currentTimeMillis();
         logger.info(String.format("%s completed in %dms%n", "Analyzing Content", end - start));
     }
@@ -159,7 +185,7 @@ public class CLI {
         }
     }
 
-    private static void printHelp() {
+    public static void printHelp() {
         System.out.println("Usage:");
         String[][] table = new String[options.size()][2];
         for (int i = 0; i < options.size(); i++) {

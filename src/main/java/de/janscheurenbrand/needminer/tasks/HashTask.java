@@ -15,7 +15,17 @@ public class HashTask implements TweetTask {
     public Tweet call(Tweet tweet) throws InterruptedException {
         String hash = hash(tweet.getText());
         tweet.addHash("originalText", hash);
+
+        hash = hash(textWithoutRT(tweet.getText()));
+        tweet.addHash("originalTextWithoutRT", hash);
         return tweet;
+    }
+
+    private String textWithoutRT(String text) {
+        if (text.startsWith("RT ")) {
+            text = text.substring(3);
+        }
+        return text;
     }
 
     private String hash(String text) {

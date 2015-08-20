@@ -1,8 +1,7 @@
 package de.janscheurenbrand.needminer.tweettagger_web;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.util.HashMap;
@@ -58,10 +57,16 @@ public class Template {
 
     private static String getFile(String path) {
         try {
-            return new String(Files.readAllBytes(Paths.get("static", "partials", path + ".html")));
-        } catch (IOException e) {
+            System.out.println(Template.class.getClassLoader().getResource("static/partials/"+path+".html").getFile());
+            return readFile(Template.class.getClassLoader().getResourceAsStream("static/partials/" + path + ".html"));
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
+    }
+
+    private static String readFile(InputStream stream) throws IOException {
+        java.util.Scanner s = new java.util.Scanner(stream).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 }

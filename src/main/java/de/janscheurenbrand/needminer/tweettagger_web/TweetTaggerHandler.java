@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 public class TweetTaggerHandler implements HttpHandler {
     private static final Logger logger = LogManager.getLogger("TweetTaggerHandler");
 
+    final int tagSetSize = 100;
+
     HashMap<String,String> params;
     Session session;
     HashMap<String,String> templateData;
@@ -114,7 +116,7 @@ public class TweetTaggerHandler implements HttpHandler {
 
         boolean tweetsWithURLs = dataset.endsWith("1") ? false : true;
 
-        List<String> tweetIds = tweetDAO.getTweetsForTagging(10, name, 3, language, tweetsWithURLs).stream().map(t -> t.getId()).collect(Collectors.toList());
+        List<String> tweetIds = tweetDAO.getTweetsForTagging(tagSetSize, name, 5, language, tweetsWithURLs).stream().map(t -> t.getId()).collect(Collectors.toList());
 
         session.setAttribute("tweetIds", tweetIds);
 
@@ -126,6 +128,7 @@ public class TweetTaggerHandler implements HttpHandler {
         if (tweetIds.size() > 0) {
             String nextTweetId = tweetIds.remove(0);
             session.setAttribute("currentTweetId", nextTweetId);
+            session.setAttribute("remaining", tweetIds.size());
             redirectTo("/" + nextTweetId, exchange);
         } else {
             redirectTo("/thankyou", exchange);
@@ -142,9 +145,13 @@ public class TweetTaggerHandler implements HttpHandler {
         String tweetId = exchange.getRelativePath().substring(1);
         Tweet tweet = tweetDAO.getTweetById(tweetId);
 
+        int remaining = (int) session.getAttribute("remaining");
+
         if (tweet != null) {
             templateData.put("tweetText", tweet.getText());
             templateData.put("tweetId", tweet.getId());
+            templateData.put("tagSetSize", String.valueOf(tagSetSize));
+            templateData.put("progress", String.valueOf(tagSetSize-remaining));
             exchange.getResponseSender().send(Template.yield("tweets/show", templateData));
         } else {
             redirectTo("/", exchange);

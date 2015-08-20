@@ -32,4 +32,10 @@ $(document).ready(function() {
         $("#alerts").append($alert);
     });
 
+    $("#start-button").click(function () {
+        console.log("clicked start");
+        $(this).text("Please be patient...").attr("disabled", "disabled");
+        $("#start-form").submit();
+    });
+
 });

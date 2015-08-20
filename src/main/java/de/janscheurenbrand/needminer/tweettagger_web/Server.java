@@ -25,7 +25,7 @@ public class Server {
 
         AccessLogReceiver logReceiver = message -> {};
 
-        FileResourceManager fileResourceManager = new FileResourceManager(new File("static/"), 100);
+        FileResourceManager fileResourceManager = new FileResourceManager(new File(Server.class.getClassLoader().getResource("static/").getFile()), 100);
 
         ResourceHandler resourceHandler = Handlers.resource(fileResourceManager).addWelcomeFiles("application.html");
         resourceHandler.setCanonicalizePaths(true);
