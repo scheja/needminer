@@ -80,6 +80,32 @@ public class TweetDAO {
                 .into(new ArrayList<>());
     }
 
+    /*
+     * expects tweets to have originalText hash set
+    */
+    public String getNextTweetIdForTagging(String tagger, int maxPreviousTaggings, String language, boolean with_url) {
+        logger.debug("Getting next tweet id for tagging");
+        ArrayList<Bson> filters = new ArrayList<>();
+        // See that we have enough taggings for each tweet
+        // Fill them up from the start
+        filters.add(exists(String.format("needTaggings.%s", maxPreviousTaggings), false));
+        // Never let someone tag a tweet more than once
+        filters.add(nin("needTaggings.tagger", tagger));
+        // Language
+        filters.add(eq("language", language));
+        // URLs
+        filters.add(eq("booleanFeatures.has_url", with_url));
+        // No duplicates
+        filters.add(eq("booleanFeatures.duplicate", false));
+        // If a tweet was tagged exactly twice without needs, it should not get displayed again
+        filters.add(or(ne("needTaggings.0.needCount", 0), ne("needTaggings.1.needCount", 0), exists("needTaggings.2", true)));
+
+        return collection.find(and(filters))
+                .sort(new BasicDBObject("hashes.originalText", 1))
+                .first()
+                .getId();
+    }
+
     public ArrayList<Tweet> getTweetsWithTaggings() {
         logger.debug("Getting German Tweets without url");
         ArrayList<Bson> filters = new ArrayList<>();

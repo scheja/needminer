@@ -12,7 +12,7 @@
         Therefore we are going to stick with the term customer need &ndash; taking all three mentioned categories into account (needs, wants and demands).</p>
 </blockquote>
 
-<p class="lead">On the following pages you will identify whether or not micro blog messages from the domain of electric mobility contain needs or not. Please also consider implicit needs, being not directly expressed but rather "between the lines". Please note: It is possible that only very few of the shown tweets contain needs. Previous research shows that about 5 to 10% of all tweets contain needs. The tagging is still very valuable, even if no needs are identified.</p>
+<p class="lead">On the following pages you will identify whether or not micro blog messages from the domain of electric mobility contain needs or not. Please also consider implicit needs, being not directly expressed but rather "between the lines". Please note: It is possible that only very few of the shown tweets contain needs. Previous research shows that about 5 to 20% of all tweets contain needs. The tagging is still very valuable, even if no needs are identified.</p>
 
 <p class="lead">Before you can start, you need to enter your name and select the language of the tweets you want to tag and one of two possible datasets. If you plan to tag multiple times, please always use the exact same name but select different languages and datasets.</p>
 
@@ -44,6 +44,20 @@
             </select>
         </div>
     </div>
+    <div class="form-group">
+        <label for="emobilityKnowledge" class="col-sm-2 col-sm-offset-2 control-label">E-Mobility Affinity</label>
+        <div class="col-sm-4">
+            <input type="hidden" id="emobilityKnowledge" name="emobilityKnowledge" data-slider-id='emobilitySlider' data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="5"/>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="twitterKnowledge" class="col-sm-2 col-sm-offset-2 control-label">Twitter Affinity</label>
+        <div class="col-sm-4">
+            <input type="hidden" id="twitterKnowledge" name="twitterKnowledge" data-slider-id='twitterSlider' data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="5"/>
+        </div>
+    </div>
+
+
     <div class="form-group">
         <div class="col-sm-offset-4 col-sm-10">
             <button type="submit" class="btn btn-lg btn-success" id="start-button">Start Tagging</button>

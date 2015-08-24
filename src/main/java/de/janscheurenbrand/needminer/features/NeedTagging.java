@@ -8,6 +8,9 @@ import java.util.List;
  */
 public class NeedTagging {
     private String tagger;
+    private int twitterKnowledge;
+    private int emobilityKnowledge;
+    private String tag;
     private Date date;
     private List<Need> needs;
     private int needCount;
@@ -23,6 +26,12 @@ public class NeedTagging {
         } else {
             this.needCount = needs.size();
         }
+    }
+
+    public NeedTagging(String tagger, String tag) {
+        this.tagger = tagger;
+        this.tag = tag;
+        this.date = new Date();
     }
 
     public NeedTagging() {
@@ -59,6 +68,30 @@ public class NeedTagging {
 
     public void setNeedCount(int needCount) {
         this.needCount = needCount;
+    }
+
+    public int getTwitterKnowledge() {
+        return twitterKnowledge;
+    }
+
+    public void setTwitterKnowledge(int twitterKnowledge) {
+        this.twitterKnowledge = twitterKnowledge;
+    }
+
+    public int getEmobilityKnowledge() {
+        return emobilityKnowledge;
+    }
+
+    public void setEmobilityKnowledge(int emobilityKnowledge) {
+        this.emobilityKnowledge = emobilityKnowledge;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     @Override

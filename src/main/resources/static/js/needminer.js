@@ -1,41 +1,41 @@
 $(document).ready(function() {
-    var needs = new Array();
-    var currentSelection;
-
-    $('#tweet-text').bind('updateInfo keyup mousedown mousemove mouseup', function(event) {
-        if (document.activeElement !== $(this)[0]) {
-            return;
-        }
-        var range = $(this).textrange();
-        $("#preview").text(range.text);
-        currentSelection = {
-            start: range.start,
-            end: range.end
-        };
-        console.log(currentSelection);
-
+    $("#mark-explicit").click(function () {
+        $("#tag").val("explicit");
+        $(".btn-success").attr("disabled", "disabled");
+        $(this).text("Please be patient...");
+        $("#mark-need-form").submit();
     });
 
-    $("#mark-need").click(function () {
-        console.log(currentSelection);
-        needs.push(currentSelection);
-        $("#needs").val(JSON.stringify(needs));
+    $("#mark-implicit").click(function () {
+        $("#tag").val("implicit");
+        $(".btn-success").attr("disabled", "disabled");
+        $(this).text("Please be patient...");
+        $("#mark-need-form").submit();
+    });
 
-        var $alert = $('<div class="alert alert-success alert-dismissible" role="alert">' +
-            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> ' +
-            '<span class="text"></span> was marked as need.</div>');
-
-        $alert.find("span.text").text($("#preview").text());
-
-        console.log($alert);
-
-        $("#alerts").append($alert);
+    $("#mark-nothing").click(function () {
+        $("#tag").val("nothing");
+        $(".btn-success").attr("disabled", "disabled");
+        $(this).text("Please be patient...");
+        $("#mark-need-form").submit();
     });
 
     $("#start-button").click(function () {
         console.log("clicked start");
         $(this).text("Please be patient...").attr("disabled", "disabled");
         $("#start-form").submit();
+    });
+
+    $('#emobilityKnowledge').slider({
+        formatter: function(value) {
+            return 'Current value: ' + value;
+        }
+    });
+
+    $('#twitterKnowledge').slider({
+        formatter: function(value) {
+            return 'Current value: ' + value;
+        }
     });
 
 });

@@ -1,10 +1,8 @@
 package de.janscheurenbrand.needminer.tweettagger_web;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import de.janscheurenbrand.needminer.database.Database;
 import de.janscheurenbrand.needminer.database.TweetDAO;
-import de.janscheurenbrand.needminer.features.Need;
 import de.janscheurenbrand.needminer.features.NeedTagging;
 import de.janscheurenbrand.needminer.twitter.Tweet;
 import io.undertow.server.HttpHandler;
@@ -17,10 +15,7 @@ import io.undertow.util.StatusCodes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by janscheurenbrand on 17/07/15.
@@ -102,6 +97,8 @@ public class TweetTaggerHandler implements HttpHandler {
         String name = params.getOrDefault("name","");
         String language = params.getOrDefault("language", "");
         String dataset = params.getOrDefault("dataset","");
+        int twitterKnowledge = Integer.valueOf(params.getOrDefault("twitterKnowledge", "0"));
+        int emobilityKnowledge = Integer.valueOf(params.getOrDefault("emobilityKnowledge", "0"));
 
         // Validation
         if (name.length() == 0 || language.length() == 0 || dataset.length() == 0) {
@@ -112,23 +109,22 @@ public class TweetTaggerHandler implements HttpHandler {
             templateData.put("username", name);
             session.setAttribute("language", language);
             session.setAttribute("dataset", dataset);
+            session.setAttribute("twitterKnowledge", twitterKnowledge);
+            session.setAttribute("emobilityKnowledge", emobilityKnowledge);
+            session.setAttribute("alreadyTagged", 0);
         }
-
-        boolean tweetsWithURLs = dataset.endsWith("1") ? false : true;
-
-        List<String> tweetIds = tweetDAO.getTweetsForTagging(tagSetSize, name, 5, language, tweetsWithURLs).stream().map(t -> t.getId()).collect(Collectors.toList());
-
-        session.setAttribute("tweetIds", tweetIds);
 
         redirectToNextTweet(exchange);
     }
 
     private void redirectToNextTweet(HttpServerExchange exchange) {
-        List<String> tweetIds = (List<String>) session.getAttribute("tweetIds");
-        if (tweetIds.size() > 0) {
-            String nextTweetId = tweetIds.remove(0);
+
+        int alreadyTagged = (Integer) session.getAttribute("alreadyTagged");
+
+        if (alreadyTagged < 100) {
+            boolean tweetsWithURLs = ((String) session.getAttribute("dataset")).endsWith("1") ? false : true;
+            String nextTweetId = tweetDAO.getNextTweetIdForTagging((String) session.getAttribute("name"), 5, (String)  session.getAttribute("language"), tweetsWithURLs);
             session.setAttribute("currentTweetId", nextTweetId);
-            session.setAttribute("remaining", tweetIds.size());
             redirectTo("/" + nextTweetId, exchange);
         } else {
             redirectTo("/thankyou", exchange);
@@ -145,13 +141,13 @@ public class TweetTaggerHandler implements HttpHandler {
         String tweetId = exchange.getRelativePath().substring(1);
         Tweet tweet = tweetDAO.getTweetById(tweetId);
 
-        int remaining = (int) session.getAttribute("remaining");
+        int alreadyTagged = (Integer) session.getAttribute("alreadyTagged");
 
         if (tweet != null) {
             templateData.put("tweetText", tweet.getText());
             templateData.put("tweetId", tweet.getId());
             templateData.put("tagSetSize", String.valueOf(tagSetSize));
-            templateData.put("progress", String.valueOf(tagSetSize-remaining));
+            templateData.put("progress", String.valueOf(alreadyTagged+1));
             exchange.getResponseSender().send(Template.yield("tweets/show", templateData));
         } else {
             redirectTo("/", exchange);
@@ -167,22 +163,19 @@ public class TweetTaggerHandler implements HttpHandler {
         }
 
         String tweetId = params.getOrDefault("tweetId", "");
-
-        // Validate request. Redirect to root if ID doesn't match
-        if (!tweetId.equals(session.getAttribute("currentTweetId"))) {
-            redirectTo("/", exchange);
-        }
-
         Tweet tweet = tweetDAO.getTweetById(tweetId);
+        String tag = params.getOrDefault("tag", "");
 
-        String json = params.getOrDefault("needs", "");
-
-        ArrayList<Need> needs = gson.fromJson(json, new TypeToken<ArrayList<Need>>(){}.getType());
-
-        NeedTagging needTagging = new NeedTagging((String) session.getAttribute("name"), needs);
+        NeedTagging needTagging = new NeedTagging((String) session.getAttribute("name"), tag);
+        needTagging.setEmobilityKnowledge((Integer)session.getAttribute("emobilityKnowledge"));
+        needTagging.setTwitterKnowledge((Integer) session.getAttribute("twitterKnowledge"));
 
         tweet.addNeedTagging(needTagging);
         tweetDAO.update(tweet);
+
+        int alreadyTagged = (Integer) session.getAttribute("alreadyTagged");
+        alreadyTagged++;
+        session.setAttribute("alreadyTagged", alreadyTagged);
 
         redirectToNextTweet(exchange);
     }
