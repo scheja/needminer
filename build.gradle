@@ -30,7 +30,7 @@ task fatJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'needminer',
                 'Implementation-Version': version,
-                'Main-Class': 'de.janscheurenbrand.needminer.tweettager_web.Server'
+                'Main-Class': 'de.janscheurenbrand.needminer.tweettagger_web.Server'
     }
     baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
