@@ -26,7 +26,7 @@
             <input type="text" name="name" class="form-control" id="inputname" placeholder="Your Name">
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group hidden">
         <label for="languageselect" class="col-sm-2 col-sm-offset-2 control-label">Language</label>
         <div class="col-sm-4">
             <select class="form-control" id="languageselect" name="language">
@@ -35,7 +35,7 @@
             </select>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group hidden">
         <label for="datasetselect" class="col-sm-2 col-sm-offset-2 control-label">Dataset</label>
         <div class="col-sm-4">
             <select class="form-control" id="datasetselect" name="dataset">
@@ -45,15 +45,19 @@
         </div>
     </div>
     <div class="form-group">
-        <label for="emobilityKnowledge" class="col-sm-2 col-sm-offset-2 control-label">E-Mobility Affinity</label>
-        <div class="col-sm-4">
+        <label for="emobilityKnowledge" class="col-sm-2 col-sm-offset-2 control-label">Knowledge: E-Mobility</label>
+        <div class="col-sm-4" style="padding-top: 7px;">
+            Amateur
             <input type="hidden" id="emobilityKnowledge" name="emobilityKnowledge" data-slider-id='emobilitySlider' data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="5"/>
+            Expert
         </div>
     </div>
     <div class="form-group">
-        <label for="twitterKnowledge" class="col-sm-2 col-sm-offset-2 control-label">Twitter Affinity</label>
-        <div class="col-sm-4">
+        <label for="twitterKnowledge" class="col-sm-2 col-sm-offset-2 control-label">Knowledge: Twitter</label>
+        <div class="col-sm-4" style="padding-top: 7px;">
+            Amateur
             <input type="hidden" id="twitterKnowledge" name="twitterKnowledge" data-slider-id='twitterSlider' data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="5"/>
+            Expert
         </div>
     </div>
 

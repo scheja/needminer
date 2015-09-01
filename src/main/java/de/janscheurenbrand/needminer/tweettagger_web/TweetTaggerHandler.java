@@ -15,6 +15,7 @@ import io.undertow.util.StatusCodes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.security.MessageDigest;
 import java.util.HashMap;
 
 /**
@@ -105,7 +106,15 @@ public class TweetTaggerHandler implements HttpHandler {
             redirectTo("/", exchange);
             return;
         } else {
-            session.setAttribute("name", name);
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(name.getBytes());
+            byte[] digest = md.digest();
+            StringBuffer sb = new StringBuffer();
+            for (byte b : digest) {
+                sb.append(String.format("%02x", b & 0xff));
+            }
+
+            session.setAttribute("name", sb.toString());
             templateData.put("username", name);
             session.setAttribute("language", language);
             session.setAttribute("dataset", dataset);

@@ -1,13 +1,6 @@
 $(document).ready(function() {
-    $("#mark-explicit").click(function () {
-        $("#tag").val("explicit");
-        $(".btn-success").attr("disabled", "disabled");
-        $(this).text("Please be patient...");
-        $("#mark-need-form").submit();
-    });
-
-    $("#mark-implicit").click(function () {
-        $("#tag").val("implicit");
+    $("#mark-need").click(function () {
+        $("#tag").val("need");
         $(".btn-success").attr("disabled", "disabled");
         $(this).text("Please be patient...");
         $("#mark-need-form").submit();
