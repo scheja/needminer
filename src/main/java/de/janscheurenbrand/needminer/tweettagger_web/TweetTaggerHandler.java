@@ -96,13 +96,11 @@ public class TweetTaggerHandler implements HttpHandler {
     private void handleStart(HttpServerExchange exchange) throws Exception {
         logger.info("start");
         String name = params.getOrDefault("name","");
-        String language = params.getOrDefault("language", "");
-        String dataset = params.getOrDefault("dataset","");
         int twitterKnowledge = Integer.valueOf(params.getOrDefault("twitterKnowledge", "0"));
         int emobilityKnowledge = Integer.valueOf(params.getOrDefault("emobilityKnowledge", "0"));
 
         // Validation
-        if (name.length() == 0 || language.length() == 0 || dataset.length() == 0) {
+        if (name.length() == 0) {
             redirectTo("/", exchange);
             return;
         } else {
@@ -116,8 +114,6 @@ public class TweetTaggerHandler implements HttpHandler {
 
             session.setAttribute("name", sb.toString());
             templateData.put("username", name);
-            session.setAttribute("language", language);
-            session.setAttribute("dataset", dataset);
             session.setAttribute("twitterKnowledge", twitterKnowledge);
             session.setAttribute("emobilityKnowledge", emobilityKnowledge);
             session.setAttribute("alreadyTagged", 0);
@@ -130,9 +126,8 @@ public class TweetTaggerHandler implements HttpHandler {
 
         int alreadyTagged = (Integer) session.getAttribute("alreadyTagged");
 
-        if (alreadyTagged < 100) {
-            boolean tweetsWithURLs = ((String) session.getAttribute("dataset")).endsWith("1") ? false : true;
-            String nextTweetId = tweetDAO.getNextTweetIdForTagging((String) session.getAttribute("name"), 5, (String)  session.getAttribute("language"), tweetsWithURLs);
+        if (alreadyTagged < 1000) {
+            String nextTweetId = tweetDAO.getNextTweetIdForTagging((String) session.getAttribute("name"), 5);
             session.setAttribute("currentTweetId", nextTweetId);
             redirectTo("/" + nextTweetId, exchange);
         } else {
@@ -202,10 +197,8 @@ public class TweetTaggerHandler implements HttpHandler {
         }
 
         String name = (String) session.getAttribute("name");
-        String language = (String) session.getAttribute("language");
-        String dataset = (String) session.getAttribute("dataset");
 
-        return ((name != null) && (language != null) && (dataset != null));
+        return name != null;
     }
 
 }

@@ -123,22 +123,22 @@ public class TwitterInsightsAPI {
         api.addKeyword("E-Tankstelle");
         api.addKeyword("Ladesäule");
         api.addKeyword("Ladesaeule");
-        //api.addKeyword("fortwo electric drive");
-        //api.addKeyword("BMW i3");
-        //api.addKeyword("Nissan Leaf");
-        //api.addKeyword("Renault Zoe");
-        //api.addKeyword("Opel Ampera");
-        //api.addKeyword("eup");
-        //api.addKeyword("e-up");
-        //api.addKeyword("e-up!");
-        //api.addKeyword("eGolf");
-        //api.addKeyword("Golf GTE");
-        //api.addKeyword("miev");
-        //api.addKeyword("i-MiEV");
-        //api.addKeyword("Tesla Model S");
-        //api.addKeyword("Peugeot iON");
-        api.setStart("2015-08-19");
-        api.setEnd("2015-08-19");
+        api.addKeyword("fortwo electric drive");
+        api.addKeyword("BMW i3");
+        api.addKeyword("Nissan Leaf");
+        api.addKeyword("Renault Zoe");
+        api.addKeyword("Opel Ampera");
+        api.addKeyword("eup");
+        api.addKeyword("e-up");
+        api.addKeyword("e-up!");
+        api.addKeyword("eGolf");
+        api.addKeyword("Golf GTE");
+        api.addKeyword("miev");
+        api.addKeyword("i-MiEV");
+        api.addKeyword("Tesla Model S");
+        api.addKeyword("Peugeot iON");
+        api.setStart("2011-01-01");
+        api.setEnd("2015-02-28");
         System.out.println(api.request());
     }
 
@@ -169,7 +169,7 @@ public class TwitterInsightsAPI {
             builder.append("," + this.end);
         }
 
-        builder.append(" (lang:de OR lang:en)");
+        builder.append(" lang:de");
 
         logger.info(builder.toString());
 
