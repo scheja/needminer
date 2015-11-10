@@ -16,14 +16,18 @@ public class HashTask implements TweetTask {
         String hash = hash(tweet.getText());
         tweet.addHash("originalText", hash);
 
-        hash = hash(textWithoutRT(tweet.getText()));
+        hash = hash(textWithoutPrefixes(tweet.getText()));
         tweet.addHash("originalTextWithoutRT", hash);
         return tweet;
     }
 
-    private String textWithoutRT(String text) {
+    private String textWithoutPrefixes(String text) {
         if (text.startsWith("RT ")) {
             text = text.substring(3);
+        }
+        while (text.startsWith("@") && text.indexOf(" ") > 0) {
+            int firstSpace = text.indexOf(" ");
+            text = text.substring(firstSpace+1);
         }
         return text;
     }
