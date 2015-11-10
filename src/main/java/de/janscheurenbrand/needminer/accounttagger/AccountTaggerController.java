@@ -1,5 +1,6 @@
 package de.janscheurenbrand.needminer.accounttagger;
 
+import de.janscheurenbrand.needminer.Config;
 import de.janscheurenbrand.needminer.database.Database;
 import de.janscheurenbrand.needminer.database.TweetDAO;
 import de.janscheurenbrand.needminer.twitter.Tweet;
@@ -43,7 +44,7 @@ public class AccountTaggerController {
 
         // Todo: refactor
         try {
-            FileReader fileReader = new FileReader("/Users/janscheurenbrand/Desktop/institutional_users.txt");
+            FileReader fileReader = new FileReader(Config.BASE_PATH + "institutional_users.txt");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
@@ -55,7 +56,7 @@ public class AccountTaggerController {
         }
 
         try {
-            FileReader fileReader = new FileReader("/Users/janscheurenbrand/Desktop/private_users.txt");
+            FileReader fileReader = new FileReader(Config.BASE_PATH + "private_users.txt");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
@@ -103,7 +104,7 @@ public class AccountTaggerController {
     private void updateTweet(String type) {
         Tweet tweet = currentTweet;
         tweet.getUser().setType(type);
-        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter("/Users/janscheurenbrand/Desktop/" + type + "_users.txt", true)))) {
+        try(PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(Config.BASE_PATH + type + "_users.txt", true)))) {
             out.println(tweet.getUser().getScreenName());
         }catch (IOException e) {
             System.out.println(e);
