@@ -26,7 +26,7 @@ public class ImportTweetsTask implements Callable {
         connect();
 
         try {
-            resultSet = statement.executeQuery("select * from tweets");
+            resultSet = statement.executeQuery("select * from elektro7");
 
             while (resultSet.next()) {
                 Tweet tweet = new Tweet();
@@ -63,7 +63,7 @@ public class ImportTweetsTask implements Callable {
         // This will load the MySQL driver, each DB has its own driver
         Class.forName("com.mysql.jdbc.Driver");
         // Setup the connection with the DB
-        connection = DriverManager.getConnection("jdbc:mysql://localhost/needminer?user=root&password=");
+        connection = DriverManager.getConnection("jdbc:mysql://localhost/ststweets?user=root&password=");
         statement = connection.createStatement();
     }
 
