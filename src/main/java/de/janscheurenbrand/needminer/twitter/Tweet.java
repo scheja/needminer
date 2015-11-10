@@ -4,10 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import de.janscheurenbrand.needminer.features.Language;
 import de.janscheurenbrand.needminer.features.NeedTagging;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Tweet POJO
@@ -32,6 +29,7 @@ public class Tweet {
     private List<NeedTagging> needTaggings;
     private HashMap<String,String> hashes;
     private HashMap<String,Boolean> booleanFeatures;
+    private float codeRatio;
 
     public Tweet() {}
 
@@ -163,6 +161,14 @@ public class Tweet {
         this.needTaggings = needTaggings;
     }
 
+    public float getCodeRatio() {
+        return codeRatio;
+    }
+
+    public void setCodeRatio(float codeRatio) {
+        this.codeRatio = codeRatio;
+    }
+
     @Override
     public String toString() {
         return "Tweet{" +
@@ -213,7 +219,20 @@ public class Tweet {
         if (this.needTaggings == null) {
             this.needTaggings = new ArrayList<>();
         }
+        removeNeedTaggingByTagger(needTagging.getTagger());
         this.needTaggings.add(needTagging);
+    }
+
+    public void removeNeedTaggingByTagger(String tagger) {
+        if (this.needTaggings == null) {
+            return;
+        }
+        Iterator<NeedTagging> it = this.needTaggings.iterator();
+        while (it.hasNext()) {
+            if (it.next().getTagger().equals(tagger)) {
+                it.remove();
+            }
+        }
     }
 
 }

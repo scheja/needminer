@@ -1,10 +1,8 @@
 package de.janscheurenbrand.needminer;
 
-import de.janscheurenbrand.needminer.database.Database;
-import de.janscheurenbrand.needminer.database.TweetDAO;
 import de.janscheurenbrand.needminer.tasks.*;
 import de.janscheurenbrand.needminer.twitter.Tweet;
-import de.janscheurenbrand.needminer.util.ExcelExport;
+import de.janscheurenbrand.needminer.util.TweetExcelExport;
 import de.janscheurenbrand.needminer.worker.WorkerPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,8 +35,10 @@ public class CLI {
         options.add(new Option("hash", "Hashes different parts of the tweet text", "hashing"));
         options.add(new Option("markduplicates", "Mark dupicate tweets. Run hash before!", "markDuplicates"));
         options.add(new Option("analyze", "Analyzes content of the tweet", "analyzeContent"));
+        options.add(new Option("taggingratio", "Mark tagged tweets with their need/noneed ratio", "taggingRatio"));
         options.add(new Option("tagginginfo", "Show stats about the taggings", "taggingInfo"));
         options.add(new Option("sample", "Gets a sample of the tweets in the DB"));
+        options.add(new Option("stats", "Get stats about the dataset"));
         options.add(new Option("exit", "Stops all tasks and exits the application"));
         options.add(new Option("help", "Prints this list", "printHelp"));
 
@@ -125,14 +125,36 @@ public class CLI {
     }
 
     public static void taggingInfo() throws Exception {
-        logger.info("Starting content analyzer");
+        logger.info("Starting tagging info");
         long start = System.currentTimeMillis();
 
         TaggingInfoTask taggingInfoTask = new TaggingInfoTask();
         taggingInfoTask.call();
 
         long end = System.currentTimeMillis();
-        logger.info(String.format("%s completed in %dms%n", "Analyzing Content", end - start));
+        logger.info(String.format("%s completed in %dms%n", "Tagging Info", end - start));
+    }
+
+    public static void taggingRatio() throws Exception {
+        logger.info("Starting tagging ratio task");
+        long start = System.currentTimeMillis();
+
+        TaggingRatioTask taggingRatioTask = new TaggingRatioTask();
+        taggingRatioTask.call();
+
+        long end = System.currentTimeMillis();
+        logger.info(String.format("%s completed in %dms%n", "Tagging ratio task", end - start));
+    }
+
+    public static void stats() throws Exception {
+        logger.info("Starting stats");
+        long start = System.currentTimeMillis();
+
+        CombinedStatsTask combinedStatsTask = new CombinedStatsTask();
+        combinedStatsTask.call();
+
+        long end = System.currentTimeMillis();
+        logger.info(String.format("%s completed in %dms%n", "Stats", end - start));
     }
 
     public static void sample() throws Exception {
@@ -140,7 +162,7 @@ public class CLI {
         long start = System.currentTimeMillis();
         SampleTask sampleTask = new SampleTask(100);
         Collection<Tweet> tweets = sampleTask.call();
-        ExcelExport export = new ExcelExport(
+        TweetExcelExport export = new TweetExcelExport(
                 new String[]{"Document Group","Document Name", "Tweet"},
                 "tweets-batch-4",
                 tweets.iterator(),
