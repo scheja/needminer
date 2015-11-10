@@ -1,52 +1,47 @@
 package de.janscheurenbrand.needminer.util;
 
-import de.janscheurenbrand.needminer.twitter.Tweet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by janscheurenbrand on 02.12.14.
  */
-public class ExcelExport {
+public class ResultsExcelExport {
 
-    private Iterator<Tweet> tweets;
+    private List<HashMap<String, Object>> results;
     private File output;
     private Workbook wb;
     private Sheet sheet;
-    private CreationHelper createHelper;
-    private String documentGroup;
-    private String[] headers;
 
-    public ExcelExport(String[] headers, String documentGroup, Iterator<Tweet> articles, File output) {
-        this.tweets = articles;
+    public ResultsExcelExport(List<HashMap<String, Object>> results, File output) {
+        this.results = results;
         this.output = output;
-        this.documentGroup = documentGroup;
-        this.headers = headers;
     }
 
     public void export() {
         wb = new HSSFWorkbook();
         sheet = wb.createSheet("Export");
-        createHelper = wb.getCreationHelper();
 
         Row row = sheet.createRow(0);
 
         Cell cell;
         int i = 0;
-        for (String cellText : headers) {
+        for (String cellText : results.get(0).keySet()) {
             cell = row.createCell(i++);
             cell.setCellValue(cellText);
         }
 
         // Iterate over tweets with index, starting at 1 because of header
         int j = 1;
-        while (tweets.hasNext()) {
-            addArticleToSheet(j++, tweets.next());
+        for (HashMap<String, Object> result : results) {
+            addArticleToSheet(j++, result);
         }
 
         try {
@@ -58,17 +53,25 @@ public class ExcelExport {
         }
     }
 
-    private void addArticleToSheet(int index, Tweet tweet) {
+    private void addArticleToSheet(int index, HashMap<String,Object> result) {
         Row row = sheet.createRow(index);
 
-        Cell cell = row.createCell(0);
-        cell.setCellValue(documentGroup);
+        Cell cell;
 
-        cell = row.createCell(1);
-        cell.setCellValue(tweet.getId());
+        int j = 0;
+        for (Map.Entry<String, Object> entry : result.entrySet()) {
+            cell = row.createCell(j);
+            Object o = entry.getValue();
+            if (o instanceof String) {
+                cell.setCellValue((String) o);
+            }
 
-        cell = row.createCell(2);
-        cell.setCellValue(createHelper.createRichTextString(tweet.getText() + " $$" + tweet.getUser().getScreenName()));
+            if (o instanceof Double) {
+                cell.setCellValue((Double) o);
+            }
+            j++;
+        }
+
     }
 
 }
