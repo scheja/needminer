@@ -1,4 +1,4 @@
-package de.janscheurenbrand.needminer.tweettagger_web;
+package de.janscheurenbrand.needminer.tweettagger;
 
 import com.google.gson.Gson;
 import de.janscheurenbrand.needminer.database.Database;
@@ -127,9 +127,14 @@ public class TweetTaggerHandler implements HttpHandler {
         int alreadyTagged = (Integer) session.getAttribute("alreadyTagged");
 
         if (alreadyTagged < 1000) {
-            String nextTweetId = tweetDAO.getNextTweetIdForTagging((String) session.getAttribute("name"), 5);
-            session.setAttribute("currentTweetId", nextTweetId);
-            redirectTo("/" + nextTweetId, exchange);
+            String nextTweetId = tweetDAO.getNextTweetIdForTagging((String) session.getAttribute("name"));
+
+            if (nextTweetId != null) {
+                session.setAttribute("currentTweetId", nextTweetId);
+                redirectTo("/" + nextTweetId, exchange);
+            } else {
+                redirectTo("/thankyou", exchange);
+            }
         } else {
             redirectTo("/thankyou", exchange);
         }
@@ -151,7 +156,12 @@ public class TweetTaggerHandler implements HttpHandler {
             templateData.put("tweetText", tweet.getText());
             templateData.put("tweetId", tweet.getId());
             templateData.put("tagSetSize", String.valueOf(tagSetSize));
-            templateData.put("progress", String.valueOf(alreadyTagged+1));
+            templateData.put("progress", String.valueOf(alreadyTagged + 1));
+
+            NeedTagging needTagging = new NeedTagging((String) session.getAttribute("name"), "currentlyInTagging");
+            tweet.addNeedTagging(needTagging);
+            tweetDAO.update(tweet);
+
             exchange.getResponseSender().send(Template.yield("tweets/show", templateData));
         } else {
             redirectTo("/", exchange);

@@ -1,4 +1,4 @@
-package de.janscheurenbrand.needminer.tweettagger_web;
+package de.janscheurenbrand.needminer.tweettagger;
 
 import java.io.IOException;
 import java.io.InputStream;
