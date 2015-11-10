@@ -15,12 +15,12 @@ public class ContentAnalyzerTask implements TweetTask {
     public Tweet call(Tweet tweet) throws InterruptedException {
         checkForURLs(tweet);
         checkForRT(tweet);
-        nlp(tweet);
+        //nlp(tweet);
         return tweet;
     }
 
     private void checkForRT(Tweet tweet) {
-        tweet.addBooleanFeature("retweet", tweet.getText().startsWith("RT:"));
+        tweet.addBooleanFeature("retweet", tweet.getText().startsWith("RT"));
     }
 
     private void checkForURLs(Tweet tweet) {
@@ -33,4 +33,10 @@ public class ContentAnalyzerTask implements TweetTask {
         StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
         Annotation annotation =  pipeline.process(tweet.getText());
     }
+
+    // Follow links to their final host (folllow up to n 301 Redirects
+    // Save the final url(s)
+    // load the blacklist from a file
+    // Analyze the final urls, check whether the host is in the pre-defined blacklist
+
 }
